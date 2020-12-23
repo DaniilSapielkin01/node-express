@@ -18,9 +18,30 @@ class Course {
     };
   }
 
+  static async update(course) {
+    const courses = await Course.getAll();
+    const idx = courses.findIndex((c) => c.id === course.id);
+    courses[idx] = course;
+
+    return new Promise((resolve, reject) => {
+      fs.writeFile(
+        path.join(__dirname, "..", "data", "courses.json"),
+        JSON.stringify(courses),
+        (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        }
+      );
+    });
+  } 
+
   async save() {
     const courses = await Course.getAll();
-    courses.push(this.toJSON());
+    courses.push(this.toJSON()); //data json
+
     return new Promise((resolve, reject) => {
       fs.writeFile(
         path.join(__dirname, "..", "data", "courses.json"),
@@ -51,6 +72,10 @@ class Course {
         }
       );
     });
+  }
+  static async getById(id) {
+    const course = await Course.getAll();
+    return course.find((c) => c.id === id);
   }
 }
 
