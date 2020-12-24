@@ -38,4 +38,14 @@ router.get("/:id", async (req, res) => {
   });
 });
 
+router.post("/remove", async (req, res) => {
+  try {
+    console.log("req.body.id=>>", req.body);
+    await Course.deleteOne({ _id: req.body.id }); //_id  должно совпадать с req.body.id
+    res.redirect("/courses");
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 module.exports = router;

@@ -35,7 +35,11 @@ app.use("/card", cardRoutes);
 
 async function start() {
   try {
-    await mongoose.connect(url, { useNewUrlParser: true });
+    await mongoose.connect(url, {
+      useNewUrlParser: true,
+      useFindAndModify: false,
+      useUnifiedTopology: true,
+    });
     //после получения базы данных мы запускаем приложение
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT} .........`);
