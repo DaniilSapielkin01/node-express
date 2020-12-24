@@ -17,7 +17,7 @@ app.engine("hbs", hbs.engine); //Происходит регистрация т�
 app.set("view engine", "hbs"); //тут с помощью set мы его уже нач-ем испол-ть
 app.set("views", "views"); //2й парамент  где хранятся все наши шаблоны
 
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/", homeRoutes);
