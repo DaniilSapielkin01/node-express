@@ -10,11 +10,20 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  console.log(req.body);
-  const course = new Course(req.body.title, req.body.price, req.body.image);
-  await course.save();
+  // console.log(req.body);
+  // const course = new Course(req.body.title, req.body.price, req.body.image);//for course2
+  const course = new Course({
+    title: req.body.title,
+    price: req.body.price,
+    img: req.body.image,
+  });
+  try {
+    await course.save();
 
-  res.redirect("/courses");
+    res.redirect("/courses");
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 module.exports = router;

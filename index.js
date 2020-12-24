@@ -1,10 +1,18 @@
 const express = require("express");
 const path = require("path");
+const mongoose = require("mongoose");
 const exphbs = require("express-handlebars");
+
 const homeRoutes = require("./routers/home");
 const addRoutes = require("./routers/add");
 const coursesRoutes = require("./routers/courses");
 const cardRoutes = require("./routers/card");
+
+const PORT = process.env.PORT || 3000;
+const passowrd = "wqlkIlvYFI0rw36G";
+const admin = "Sapielkin_Daniil";
+const dbName = "shop";
+const url = `mongodb+srv://${admin}:${passowrd}@cluster0.czaho.mongodb.net/${dbName}`;
 
 const app = express();
 
@@ -25,7 +33,15 @@ app.use("/add", addRoutes);
 app.use("/courses", coursesRoutes);
 app.use("/card", cardRoutes);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT} .........`);
-});
+async function start() {
+  try {
+    await mongoose.connect(url, { useNewUrlParser: true });
+    //после получения базы данных мы запускаем приложение
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT} .........`);
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+start();
