@@ -13,6 +13,7 @@ const coursesRoutes = require("./routes/courses");
 const authRoutes = require("./routes/auth");
 const User = require("./models/user");
 const varMiddleware = require("./middleware/variables");
+const userMiddleware = require("./middleware/user");
 
 const PORT = process.env.PORT || 3000;
 const passowrd = "wqlkIlvYFI0rw36G";
@@ -23,7 +24,7 @@ const MONGODB_URI = `mongodb+srv://${admin}:${passowrd}@cluster0.czaho.mongodb.n
 const app = express();
 const hbs = exphbs.create({
   defaultLayout: "main",
-  extname: "hbs",
+  extname: "hbs", 
 });
 
 const store = new MongoStore({
@@ -45,7 +46,10 @@ app.use(
     store: store,
   })
 );
+
+// --- Middleware ---
 app.use(varMiddleware);
+app.use(userMiddleware);
 
 app.use("/", homeRoutes);
 app.use("/add", addRoutes);
