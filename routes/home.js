@@ -3,7 +3,7 @@ const router = Router();
 
 router.get("/", (req, res) => {
   res.render("index", {
-    title: "Р“Р»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р°",
+    title: "Главная страница",
     isHome: true,
   });
 });
