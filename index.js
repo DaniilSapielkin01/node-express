@@ -15,12 +15,9 @@ const coursesRoutes = require("./routes/courses");
 const authRoutes = require("./routes/auth");
 const varMiddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
+const keys = require("./keys");
 
 const PORT = process.env.PORT || 3000;
-const passowrd = "wqlkIlvYFI0rw36G";
-const admin = "Sapielkin_Daniil";
-const dbName = "shop";
-const MONGODB_URI = `mongodb+srv://${admin}:${passowrd}@cluster0.czaho.mongodb.net/${dbName}`;
 
 const app = express();
 const hbs = exphbs.create({
@@ -30,7 +27,7 @@ const hbs = exphbs.create({
 
 const store = new MongoStore({
   collection: "sessions",
-  uri: MONGODB_URI,
+  uri: keys.MONGODB_URI,
 });
 
 app.engine("hbs", hbs.engine);
@@ -41,7 +38,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
-    secret: "some secret value",
+    secret: keys.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: store,
@@ -63,7 +60,7 @@ app.use("/auth", authRoutes);
 
 async function start() {
   try {
-    await mongoose.connect(MONGODB_URI, {
+    await mongoose.connect(keys.MONGODB_URI, {
       useNewUrlParser: true,
       useFindAndModify: false,
       useUnifiedTopology: true,
