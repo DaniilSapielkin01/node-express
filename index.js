@@ -16,6 +16,7 @@ const authRoutes = require("./routes/auth");
 const varMiddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
 const keys = require("./keys");
+const errorHandler = require("./middleware/error");
 
 const PORT = process.env.PORT || 3000;
 
@@ -58,6 +59,9 @@ app.use("/courses", coursesRoutes);
 app.use("/card", cardRoutes);
 app.use("/orders", ordersRoutes);
 app.use("/auth", authRoutes);
+
+//404 error
+app.use(errorHandler);
 
 async function start() {
   try {
