@@ -1,20 +1,24 @@
 const { Router } = require("express");
 const bcrypt = require("bcryptjs");
-const nodeMailer = require("nodemailer");
-const sendGrid = require("nodemailer-sendgrid-transport");
-
+// const nodeMailer = require("nodemailer");// with const transporter
+// const sendGrid = require("nodemailer-sendgrid-transport");// with const transporter
+const crypto = require("crypto");
 const registerEmail = require("../emails/registration");
+const sgMail = require("@sendgrid/mail");
+
+const resetEmail = require("../emails/reset");
 const keys = require("../keys");
 const User = require("../models/user");
 const router = Router();
 
 //создание транспортера кот-й будет отправлять e-mail
 //createTransport - передаем тот сервис кот-м пользу-ся
-const transporter = nodeMailer.createTransport(
-  sendGrid({
-    auth: { api_key: keys.SENDGRID_API_KEY },
-  })
-);
+// const transporter = nodeMailer.createTransport(
+//   sendGrid({
+//     auth: { api_key: keys.SENDGRID_API_KEY },
+//   })
+// );
+sgMail.setApiKey(keys.SENDGRID_API_KEY);
 
 router.get("/login", async (req, res) => {
   res.render("auth/login", {
@@ -77,23 +81,67 @@ router.post("/register", async (req, res) => {
       });
       await user.save();
       res.redirect("/auth/login#login");
-      await transporter.sendMail(registerEmail(email));
+      // await transporter.sendMail(registerEmail(email));
+      await sgMail.send(registerEmail(email));
     }
   } catch (e) {
     console.log(e);
   }
 });
 
-router.get("/reset", async (req, res) => {
+router.get("/reset", (req, res) => {
   res.render("auth/reset", {
     title: "Забыли пароль ?",
     error: req.flash("error"),
   });
 });
-router.post("/reset", async (req, res) => {
+
+router.get("/password/:token", async (req, res) => {
+  if (!req.params.token) {
+    return res.redirect("/auth/login");
+  }
   try {
+    const user = await User.findOne({
+      resetToken: req.params.token, //должны совпадать
+      resetTokenExp: { $gt: Date.now() }, // должно выполнитс данное условие
+    });
+    if (!user) {
+      return res.redirect("/auth/login");
+    } else {
+      res.render("auth/password", {
+        title: "Востановить доступ",
+        error: req.flash("error"),
+        userId: user._id.toString(),
+        token: req.params.token,
+      });
+    }
     
 
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.post("/reset", (req, res) => {
+  try {
+    crypto.randomBytes(32, async (err, buffer) => {
+      if (err) {
+        req.flash("error", "Что-то пошло не так, повторите попытку ");
+        return res.redirect("/auth/reset");
+      }
+      const token = buffer.toString("hex"); //сгнерированный токен
+      const candidate = await User.findOne({ email: req.body.email });
+      if (candidate) {
+        candidate.resetToken = token;
+        candidate.resetTokenExp = Date.now() + 60 * 60 * 1000; //1 hour
+        await candidate.save();
+        await sgMail.send(resetEmail(candidate.email, token));
+        res.redirect("/auth/login");
+      } else {
+        req.flash("error", "Такого email нет");
+        res.redirect("/auth/reset");
+      }
+    });
   } catch (e) {
     console.log(e);
   }

@@ -26,6 +26,8 @@ const userSchema = new Schema({
       },
     ],
   },
+  resetToken: String,
+  resetTokenExp: Date,
 });
 
 userSchema.methods.addToCart = function (course) {
