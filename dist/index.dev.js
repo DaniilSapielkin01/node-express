@@ -29,13 +29,15 @@ var coursesRoutes = require("./routes/courses");
 
 var authRoutes = require("./routes/auth");
 
+var profileRoutes = require("./routes/profile");
+
 var varMiddleware = require("./middleware/variables");
 
 var userMiddleware = require("./middleware/user");
 
-var keys = require("./keys");
-
 var errorHandler = require("./middleware/error");
+
+var keys = require("./keys");
 
 var PORT = process.env.PORT || 3000;
 var app = express();
@@ -71,7 +73,8 @@ app.use("/add", addRoutes);
 app.use("/courses", coursesRoutes);
 app.use("/card", cardRoutes);
 app.use("/orders", ordersRoutes);
-app.use("/auth", authRoutes); //404 error
+app.use("/auth", authRoutes);
+app.use("/profile", profileRoutes); //404 error
 
 app.use(errorHandler);
 
