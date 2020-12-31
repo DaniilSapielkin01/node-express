@@ -1,5 +1,5 @@
 if (process.env.NODE_ENV === "production") {
-  module.exports = reqruire("./keys.prod");
+  module.exports = require("./keys.prod");
 } else {
-  module.exports = reqruire("./keys.dev");
+  module.exports = require("./keys.dev");
 }

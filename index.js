@@ -7,6 +7,7 @@ const MongoStore = require("connect-mongodb-session")(session); //После п�
 const csrf = require("csurf");
 const flash = require("connect-flash");
 const helmet = require("helmet");
+const compression = require("compression");
 
 const homeRoutes = require("./routes/home");
 const cardRoutes = require("./routes/card");
@@ -55,8 +56,10 @@ app.use(fileMiddleware.single("avatar"));
 // --- Middleware ---
 app.use(csrf());
 app.use(flash());
-app.use(helmet());
+// app.use(helmet());//блокируте загрузку картинки с сервера
+app.disable("x-powered-by");
 
+app.use(compression());
 app.use(varMiddleware);
 app.use(userMiddleware);
 
