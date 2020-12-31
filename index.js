@@ -18,6 +18,7 @@ const profileRoutes = require("./routes/profile");
 const varMiddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
 const errorHandler = require("./middleware/error");
+const fileMiddleware = require("./middleware/file");
 const keys = require("./keys");
 
 const PORT = process.env.PORT || 3000;
@@ -48,6 +49,7 @@ app.use(
     store: store,
   })
 );
+app.use(fileMiddleware.single("avatar"));
 // --- Middleware ---
 app.use(csrf());
 app.use(flash());
