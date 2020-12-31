@@ -2,16 +2,16 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cd(null, "images");
+    cb(null, "images");
   }, //куда складываем данный файл
   filename(req, file, cb) {
-    cb(null, new Date().toISOString() + `-` + file.originalname);
-  }, //как назвать новый файл (кот-й загрузили)
+    cb(null, new Date().toISOString() + "-" + file.originalname); //как назвать новый файл (кот-й загрузили)
+  },
 }); //Куда и как сохраняем данные
 
-const allowedTypes = ["images/png", "images/jpg", "images/jpeg"];
+const allowedTypes = ["image/png", "image/jpg", "image/jpeg"];
 
-const fileFilter = (req, file, callBack) => {
+const fileFilter = (req, file, cb) => {
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
